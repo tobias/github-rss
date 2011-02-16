@@ -1,10 +1,9 @@
-configure do
-  require 'rubygems'
-  require 'sinatra'
-  require 'feed_parser'
-  require 'memcached'
-  CACHE = Memcached.new
-end
+require 'rubygems'
+require 'sinatra'
+require 'feed_parser'
+require 'memcached'
+
+CACHE = Memcached.new
 
 get '/' do
   if params[:feed] && params[:user] && params[:token]
