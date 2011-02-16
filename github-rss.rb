@@ -1,9 +1,9 @@
 require 'rubygems'
 require 'sinatra'
 require 'feed_parser'
-require 'memcached'
+require 'dalli'
 
-CACHE = Memcached.new
+CACHE = Dalli::Client.new
 
 get '/' do
   if params[:feed] && params[:user] && params[:token]
