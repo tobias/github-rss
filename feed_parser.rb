@@ -23,8 +23,10 @@ class FeedParser
       if commit_url =~ %r{github.com/(.*?)/(.*?)/commit/([a-f0-9]*)$}
         user, repo, sha = $1, $2, $3
         key = "#{user}/#{repo}/#{sha}"
+        puts "Checking cache for #{key}"
         commit = CACHE.get(key)
         if !commit
+          puts "#{key} not in cache"
           commit = RestClient::Resource.new("https://github.com/api/v2/json/commits/show/#{key}",
                                           "#{@user}/token",
                                             @token).get
