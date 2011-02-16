@@ -1,0 +1,24 @@
+GEM
+  remote: http://rubygems.org/
+  specs:
+    dalli (1.0.2)
+    json (1.5.1)
+    mime-types (1.16)
+    nokogiri (1.4.4)
+    rack (1.2.1)
+    rest-client (1.6.1)
+      mime-types (>= 1.16)
+    sinatra (1.1.2)
+      rack (~> 1.1)
+      tilt (~> 1.2)
+    tilt (1.2.2)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  dalli
+  json
+  nokogiri
+  rest-client
+  sinatra
