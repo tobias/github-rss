@@ -1,6 +1,7 @@
 require 'rubygems'
 require 'sinatra'
 require 'feed_parser'
+require 'haml'
 
 if ENV['RACK_ENV'] == 'production'
   require 'dalli'

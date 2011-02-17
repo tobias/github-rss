@@ -1,6 +1,7 @@
+require 'cgi'
+require 'open-uri'
 require 'json'
 require 'nokogiri'
-require 'open-uri'
 require 'restclient'
 
 class FeedParser
@@ -36,7 +37,7 @@ class FeedParser
         commit = JSON.parse(commit)["commit"]
         diff = "<pre>"
         (commit["modified"] || []).each do |mod|
-          diff << "\n\n#{mod["diff"]}" if mod["diff"]
+          diff << "\n\n#{CGI.escapeHTML(mod["diff"])}" if mod["diff"]
         end
         diff << "</pre>"
         entry.css('content').first.content += diff
