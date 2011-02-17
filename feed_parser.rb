@@ -30,7 +30,7 @@ class FeedParser
           commit = RestClient::Resource.new("https://github.com/api/v2/json/commits/show/#{key}",
                                           "#{@user}/token",
                                             @token).get
-          CACHE.put(key, commit)
+          CACHE.set(key, commit)
         end
         
         commit = JSON.parse(commit)["commit"]
