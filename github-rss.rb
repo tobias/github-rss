@@ -11,7 +11,6 @@ else
 end
 
 get '/' do
-  puts ENV.inspect
   if params[:feed] 
     FeedParser.new(params[:feed]).parse
   else
