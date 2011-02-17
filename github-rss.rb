@@ -1,18 +1,21 @@
 require 'rubygems'
 require 'sinatra'
 require 'feed_parser'
-require 'dalli'
 
-CACHE = Dalli::Client.new
+if ENV['RACK_ENV'] == 'production'
+  require 'dalli'
+  CACHE =  Dalli::Client.new
+else
+  require 'mock_memcache'
+  CACHE = MockMemcache.new
+end
 
 get '/' do
+  puts ENV.inspect
   if params[:feed] 
-    FeedParser.new(params[:feed], params[:user], params[:token]).parse
+    FeedParser.new(params[:feed]).parse
   else
-    "Please provide the feed url as a query parameter, like so:\n" +
-      "http://app.hostname/?feed=https://github.com/your/project/feed\n\n" +
-      "If you are accessing a private repo, you'll need to provide user and " +
-      "token params for your github username and token,"
+    haml :index
   end
 end
 

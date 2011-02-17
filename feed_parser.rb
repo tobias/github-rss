@@ -4,15 +4,15 @@ require 'open-uri'
 require 'restclient'
 
 class FeedParser
-  def initialize(feed_url, user, token)
+  def initialize(feed_url)
     @feed_url = feed_url
-    @user = user
-    @token = token
+    if @feed_url =~ %r{login=(.*?)&token=(.*)$}
+      @login, @token = $1, $2
+    end
   end
 
   def parse
     @feed = Nokogiri::XML(open(@feed_url))
-    puts @feed_url
     add_diffs
     @feed.to_xml
   end
@@ -28,7 +28,7 @@ class FeedParser
         if !commit
           puts "#{key} not in cache"
           args = ["https://github.com/api/v2/json/commits/show/#{key}"]
-          args += ["#{@user}/token", @token] if @user
+          args += ["#{@login}/token", @token] if @login
           commit = RestClient::Resource.new(*args).get
           CACHE.set(key, commit)
         end
@@ -36,8 +36,7 @@ class FeedParser
         commit = JSON.parse(commit)["commit"]
         diff = "<pre>"
         (commit["modified"] || []).each do |mod|
-          diff << "\n\n"
-          diff << mod["diff"]
+          diff << "\n\n#{mod["diff"]}" if mod["diff"]
         end
         diff << "</pre>"
         entry.css('content').first.content += diff

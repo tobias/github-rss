@@ -4,3 +4,4 @@ gem "json"
 gem "nokogiri"
 gem "rest-client"
 gem 'dalli'
+gem 'haml'

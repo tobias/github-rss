@@ -1,0 +1,11 @@
+%h1
+  Stick some diffs in your Github commit feed!
+
+%p
+  Just provide the commit feed url as a query parameter, like so:
+  %pre
+    http://#{request.host}/?feed=https://github.com/username/project/commits/master.atom
+  If it is a private repo, you'll need to escape  the '?' and '&' in the feed url 
+  with '%3f' and '%26' respectively, like so:
+  %pre
+    http://#{request.host}/?feed=https://github.com/username/project/commits/master.atom%3flogin=my_login%26token=1adefed234

@@ -2,6 +2,7 @@ GEM
   remote: http://rubygems.org/
   specs:
     dalli (1.0.2)
+    haml (3.0.25)
     json (1.5.1)
     mime-types (1.16)
     nokogiri (1.4.4)
@@ -18,6 +19,7 @@ PLATFORMS
 
 DEPENDENCIES
   dalli
+  haml
   json
   nokogiri
   rest-client
