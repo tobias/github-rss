@@ -35,12 +35,14 @@ class FeedParser
         end
         
         commit = JSON.parse(commit)["commit"]
+        author = "<div>Author: #{commit['author']['name']}</div>"
         diff = "<pre>"
         (commit["modified"] || []).each do |mod|
           diff << "\n\n#{CGI.escapeHTML(mod["diff"])}" if mod["diff"]
         end
         diff << "</pre>"
-        entry.css('content').first.content += diff
+        content = entry.css('content').first.content
+        entry.css('content').first.content = author + content + diff
       end
 
     end
