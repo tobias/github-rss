@@ -29,7 +29,8 @@ else
 end
 
 get '/' do
-  if params[:feed] 
+  if params[:feed]
+    content_type 'application/xml'
     FeedParser.new(params[:feed]).parse
   else
     haml :index
