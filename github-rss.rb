@@ -28,6 +28,8 @@ else
   CACHE = MockMemcache.new
 end
 
+set :show_exceptions, true
+
 get '/' do
   if params[:feed]
     content_type 'application/xml'

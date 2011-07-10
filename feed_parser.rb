@@ -23,14 +23,19 @@ require 'restclient'
 
 class FeedParser
   def initialize(feed_url)
-    @feed_url = feed_url
+    @feed_url = feed_url.gsub(/^http:/, 'https:')
     if @feed_url =~ %r{login=(.*?)&token=(.*)$}
       @login, @token = $1, $2
     end
   end
 
   def parse
-    @feed = Nokogiri::XML(open(@feed_url))
+    begin
+      @feed = Nokogiri::XML(open(@feed_url))
+    rescue Exception => ex
+      puts "Failed to parse #{@feed_url}: #{ex}"
+      raise ParseException.new("Failed to parse #{@feed_url}", ex)
+    end
     add_diffs
     @feed.to_xml
   end
@@ -61,5 +66,15 @@ class FeedParser
       end
 
     end
+  end
+end
+
+
+class ParseException < RuntimeError
+  attr_reader :exception
+  
+  def initialize(msg, cause)
+    super("#{msg}: #{cause}")
+    @exception = cause
   end
 end
