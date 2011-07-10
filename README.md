@@ -16,7 +16,7 @@ like so:
 
     http://github-rss.example.com/?feed=https://github.com/username/project/commits/master.atom%3flogin=my_login%26token=1adefed234
 
-# Problems
+## Problems
 
 [Issues] and pull requests welcome!
 
