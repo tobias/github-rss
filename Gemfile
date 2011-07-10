@@ -5,3 +5,4 @@ gem "nokogiri"
 gem "rest-client"
 gem 'dalli'
 gem 'haml'
+gem 'maruku'

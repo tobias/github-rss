@@ -4,6 +4,8 @@ GEM
     dalli (1.0.2)
     haml (3.0.25)
     json (1.5.1)
+    maruku (0.6.0)
+      syntax (>= 1.0.0)
     mime-types (1.16)
     nokogiri (1.4.4)
     rack (1.2.1)
@@ -12,6 +14,7 @@ GEM
     sinatra (1.1.2)
       rack (~> 1.1)
       tilt (~> 1.2)
+    syntax (1.0.0)
     tilt (1.2.2)
 
 PLATFORMS
@@ -21,6 +24,7 @@ DEPENDENCIES
   dalli
   haml
   json
+  maruku
   nokogiri
   rest-client
   sinatra
