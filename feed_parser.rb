@@ -85,7 +85,7 @@ class FeedParser
   end
   
   def escape(str)
-    CGI.escapeHTML(str)
+    CGI.escapeHTML(str) if str
   end
 end
 
