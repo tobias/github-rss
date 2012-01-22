@@ -61,7 +61,7 @@ class FeedParser
         (commit["modified"] || []).each do |mod|
           mod_diff = mod['diff']
           if mod_diff
-            diff << "\n\n"
+            diff << "\n\n\n===> " << mod['filename'] << "\n\n"
             if binary?( mod['filename'])
               split_diff = mod_diff.split("\n")
               diff << escape(split_diff[0]) << "\n"
