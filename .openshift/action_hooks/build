@@ -1,0 +1,97 @@
+#!/bin/bash
+# This is a simple build script, place your post-deploy but pre-start commands
+# in this script.  This script gets executed directly, so it could be python,
+# php, ruby, etc.
+
+JRUBY_VERSION="1.6.7"
+POLYGLOT_VERSION="1.5.0"
+TORQUEBOX_VERSION="2.0.0.cr1"
+RACK_ENV="production"
+
+cd ${OPENSHIFT_DATA_DIR}
+
+# Download a JRuby and plonk it next to our jboss.home.dir
+if [ ! -d jruby-${JRUBY_VERSION} ]; then
+    curl -Lo jruby-bin-${JRUBY_VERSION}.tar.gz "http://jruby.org.s3.amazonaws.com/downloads/${JRUBY_VERSION}/jruby-bin-${JRUBY_VERSION}.tar.gz"
+    tar -xzf jruby-bin-${JRUBY_VERSION}.tar.gz
+    rm jruby-bin-${JRUBY_VERSION}.tar.gz
+    rm -rf jruby-${JRUBY_VERSION}/share/ri/1.8/system/*
+    ln -sf jruby-${JRUBY_VERSION} jruby
+fi
+
+# Download a TorqueBox distribution and extract the modules
+if [ ! -d ${OPENSHIFT_GEAR_DIR}${OPENSHIFT_GEAR_TYPE}/modules/org/torquebox ] && [ ! -d torquebox-${TORQUEBOX_VERSION}-modules ]; then
+    curl -Lo torquebox-dist-modules.zip "http://torquebox.org/release/org/torquebox/torquebox-dist/${TORQUEBOX_VERSION}/torquebox-dist-${TORQUEBOX_VERSION}-modules.zip"
+    unzip -d torquebox-${TORQUEBOX_VERSION}-modules torquebox-dist-modules.zip
+    rm torquebox-dist-modules.zip
+fi
+
+if [ ! -d ${OPENSHIFT_GEAR_DIR}${OPENSHIFT_GEAR_TYPE}/modules/org/torquebox ]; then
+    # Symlink TorqueBox modules into the app's .openshift/config/modules directory
+    mkdir -p ${OPENSHIFT_REPO_DIR}/.openshift/config/modules/org
+    ln -s ${OPENSHIFT_DATA_DIR}/torquebox-${TORQUEBOX_VERSION}-modules/modules/org/torquebox ${OPENSHIFT_REPO_DIR}/.openshift/config/modules/org/torquebox
+fi
+
+# Download a Polyglot HASingleton module and extract
+if [ ! -d ${OPENSHIFT_GEAR_DIR}${OPENSHIFT_GEAR_TYPE}/modules/org/projectodd/polyglot/hasingleton ] && [ ! -d polyglot-hasingleton-${POLYGLOT_VERSION}-module ]; then
+    curl -Lo polyglot-hasingleton-module.zip "http://torquebox.org/release/org/projectodd/polyglot-hasingleton/${POLYGLOT_VERSION}/polyglot-hasingleton-${POLYGLOT_VERSION}-module.zip"
+    unzip -d polyglot-hasingleton-${POLYGLOT_VERSION}-module polyglot-hasingleton-module.zip
+    rm polyglot-hasingleton-module.zip
+fi
+
+if [ ! -d ${OPENSHIFT_GEAR_DIR}${OPENSHIFT_GEAR_TYPE}/modules/org/projectodd/polyglot/hasingleton ]; then
+    # Symlink Polyglot HASingleton module into the app's .openshift/config/modules directory
+    mkdir -p ${OPENSHIFT_REPO_DIR}/.openshift/config/modules/org/projectodd/polyglot/hasingleton
+    ln -s ${OPENSHIFT_DATA_DIR}/polyglot-hasingleton-${POLYGLOT_VERSION}-module ${OPENSHIFT_REPO_DIR}/.openshift/config/modules/org/projectodd/polyglot/hasingleton/main
+fi
+
+# Add jruby to our path
+export PATH=${OPENSHIFT_DATA_DIR}/jruby/bin:$PATH
+
+# Set JRUBY_HOME if we need to
+if ! grep 'jruby.home' ${OPENSHIFT_GEAR_DIR}${OPENSHIFT_GEAR_TYPE}/bin/standalone.conf > /dev/null; then
+    # Copy the symlinked file to a new file
+    mv ${OPENSHIFT_GEAR_DIR}${OPENSHIFT_GEAR_TYPE}/bin/standalone.conf ${OPENSHIFT_GEAR_DIR}${OPENSHIFT_GEAR_TYPE}/bin/standalone.conf.original
+    cp ${OPENSHIFT_GEAR_DIR}${OPENSHIFT_GEAR_TYPE}/bin/standalone.conf.original ${OPENSHIFT_GEAR_DIR}${OPENSHIFT_GEAR_TYPE}/bin/standalone.conf
+    echo -e "\nJAVA_OPTS=\"\$JAVA_OPTS -Djruby.home=${OPENSHIFT_DATA_DIR}jruby\"" >> ${OPENSHIFT_GEAR_DIR}${OPENSHIFT_GEAR_TYPE}/bin/standalone.conf
+else
+    echo "jruby.home has already been set."
+fi
+
+# Install Bundler if needed
+if ! jruby -S gem list | grep bundler > /dev/null; then
+    jruby -S gem install bundler
+fi
+
+# Install jruby-openssl if needed
+if ! jruby -S gem list | grep jruby-openssl > /dev/null; then
+  jruby -S gem install jruby-openssl
+fi
+
+# Install Rack if needed
+if ! jruby -S gem list | grep rack > /dev/null; then
+    jruby -S gem install rack
+fi
+
+# Install the TorqueBox gems if needed
+if ! jruby -S gem list | grep "torquebox (${TORQUEBOX_VERSION})" > /dev/null; then
+    jruby -S gem install torquebox -v ${TORQUEBOX_VERSION}
+fi
+
+# If .bundle isn't currently committed and a Gemfile is then bundle install
+if [ ! -d ${OPENSHIFT_REPO_DIR}/.bundle ] && [ -f ${OPENSHIFT_REPO_DIR}/Gemfile ]; then
+    jruby -J-Xmx192m -S bundle install --gemfile ${OPENSHIFT_REPO_DIR}/Gemfile
+fi
+
+# Ensure a deployments directory exists
+mkdir -p ${OPENSHIFT_REPO_DIR}/deployments
+
+# Create a deployment descriptor for this app
+cat <<__EOF__ > ${OPENSHIFT_REPO_DIR}/deployments/app-knob.yml
+---
+application:
+  root: ${OPENSHIFT_REPO_DIR}
+environment:
+  RACK_ENV: ${RACK_ENV}
+__EOF__
+touch ${OPENSHIFT_REPO_DIR}/deployments/app-knob.yml.dodeploy
