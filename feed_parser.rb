@@ -24,8 +24,8 @@ require 'restclient'
 class FeedParser
   def initialize(feed_url)
     @feed_url = feed_url.gsub(/^http:/, 'https:')
-    if @feed_url =~ %r{login=(.*?)&token=(.*)$}
-      @login, @token = $1, $2
+    if @feed_url =~ %r{token=(.*)$}
+      @token = $1
     end
   end
 
@@ -45,13 +45,13 @@ class FeedParser
       commit_url = entry.css("link").first['href']
       if commit_url =~ %r{github.com/(.*?)/(.*?)/commit/([a-f0-9]*)$}
         user, repo, sha = $1, $2, $3
-        key = "#{user}/#{repo}/#{sha}"
+        key = "#{user}/#{repo}/commits/#{sha}"
         puts "Checking cache for #{key}"
         commit = CACHE.get(key)
         if !commit
           puts "#{key} not in cache"
-          args = ["https://github.com/api/v2/json/commits/show/#{key}"]
-          args += ["#{@login}/token", @token] if @login
+          args = ["https://api.github.com/repos/#{key}"]
+          args += ["access_token", @token] if @token
           commit = RestClient::Resource.new(*args).get
           CACHE.set(key, commit)
         end
