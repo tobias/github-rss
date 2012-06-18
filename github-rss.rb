@@ -20,7 +20,13 @@ require 'sinatra'
 require 'feed_parser'
 require 'haml'
 
-if ENV['RACK_ENV'] == 'production'
+if ENV['TORQUEBOX_APP_NAME']
+  require 'torquebox-cache'
+  TorqueBox::Infinispan::Cache.send(:alias_method, :set, :put)
+  CACHE = TorqueBox::Infinispan::Cache.new
+  # this is gross
+  OpenSSL::SSL::VERIFY_PEER = OpenSSL::SSL::VERIFY_NONE
+elsif ENV['RACK_ENV'] == 'production'
   require 'dalli'
   CACHE =  Dalli::Client.new
 else
