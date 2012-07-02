@@ -56,20 +56,13 @@ class FeedParser
           CACHE.set(key, commit)
         end
        
-        commit = JSON.parse(commit)["commit"]
+        commit = JSON.parse(commit)
         diff = "<pre>"
-        (commit["modified"] || []).each do |mod|
-          mod_diff = mod['diff']
-          if mod_diff
-            diff << "\n\n\n===> " << mod['filename'] << "\n\n"
-            if binary?( mod['filename'])
-              split_diff = mod_diff.split("\n")
-              diff << escape(split_diff[0]) << "\n"
-              diff << escape(split_diff[1]) << "\n"
-              diff << "(binary file)"
-            else
-              diff << "#{escape(mod["diff"])}" 
-            end
+        (commit["files"] || []).each do |f|
+          f_diff = f['patch']
+          if f_diff
+            diff << "\n\n\n===> " << f['filename'] << "\n\n"
+            diff << "#{escape(f_diff)}" 
           end
         end
         diff << "</pre>"
@@ -77,11 +70,6 @@ class FeedParser
       end
 
     end
-  end
-
-  def binary?(filename)
-    # hack
-    filename =~ %r{\.(pdf|jpg|jpeg|gif|png)$}
   end
   
   def escape(str)
