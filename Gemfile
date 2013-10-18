@@ -6,7 +6,8 @@ gem "rest-client", '1.6.7'
 gem 'haml', '3.1.6'
 gem 'maruku', '0.6.0'
 
-gem 'dalli', '2.0.5', :platforms => :mri
+gem 'memcachier', '~> 0.0.2', :platforms => :mri
+gem 'dalli', '~> 2.6.4', :platforms => :mri
 
 gem 'torquebox-cache', :platforms => :jruby
 gem 'jruby-openssl', :platforms => :jruby

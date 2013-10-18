@@ -28,6 +28,7 @@ if ENV['TORQUEBOX_APP_NAME']
   OpenSSL::SSL::VERIFY_PEER = OpenSSL::SSL::VERIFY_NONE
 elsif ENV['RACK_ENV'] == 'production'
   require 'dalli'
+  require 'memcachier'
   CACHE =  Dalli::Client.new
 else
   require 'mock_memcache'

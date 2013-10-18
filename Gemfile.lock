@@ -1,13 +1,19 @@
 GEM
   remote: http://rubygems.org/
   specs:
-    dalli (2.0.5)
+    bouncy-castle-java (1.5.0146.1)
+    dalli (2.6.4)
     haml (3.1.6)
+    jruby-openssl (0.7.6.1)
+      bouncy-castle-java (>= 1.5.0146.1)
     json (1.7.3)
+    json (1.7.3-java)
     maruku (0.6.0)
       syntax (>= 1.0.0)
+    memcachier (0.0.2)
     mime-types (1.18)
     nokogiri (1.5.4)
+    nokogiri (1.5.4-java)
     rack (1.4.1)
     rack-protection (1.2.0)
       rack
@@ -19,16 +25,24 @@ GEM
       tilt (~> 1.3, >= 1.3.3)
     syntax (1.0.0)
     tilt (1.3.3)
+    torquebox-cache (2.0.3-java)
+      torquebox-core (= 2.0.3)
+      torquebox-transactions (= 2.0.3)
+    torquebox-core (2.0.3-java)
+    torquebox-transactions (2.0.3)
+      torquebox-core (= 2.0.3)
 
 PLATFORMS
+  java
   ruby
 
 DEPENDENCIES
-  dalli (= 2.0.5)
+  dalli (~> 2.6.4)
   haml (= 3.1.6)
   jruby-openssl
   json (= 1.7.3)
   maruku (= 0.6.0)
+  memcachier (~> 0.0.2)
   nokogiri (= 1.5.4)
   rest-client (= 1.6.7)
   sinatra (= 1.3.2)
