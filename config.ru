@@ -18,6 +18,8 @@
 require 'rubygems'
 require 'bundler/setup'
 
+$LOAD_PATH.unshift(".")
+
 require 'github-rss'
 
 run Sinatra::Application

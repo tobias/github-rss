@@ -1,22 +1,19 @@
 GEM
   remote: http://rubygems.org/
   specs:
-    bouncy-castle-java (1.5.0146.1)
     dalli (2.6.4)
     haml (3.1.6)
-    jruby-openssl (0.7.6.1)
-      bouncy-castle-java (>= 1.5.0146.1)
     json (1.7.3)
-    json (1.7.3-java)
+    kgio (2.8.1)
     maruku (0.6.0)
       syntax (>= 1.0.0)
     memcachier (0.0.2)
-    mime-types (1.18)
+    mime-types (2.0)
     nokogiri (1.5.4)
-    nokogiri (1.5.4-java)
-    rack (1.4.1)
-    rack-protection (1.2.0)
+    rack (1.5.2)
+    rack-protection (1.5.1)
       rack
+    raindrops (0.12.0)
     rest-client (1.6.7)
       mime-types (>= 1.16)
     sinatra (1.3.2)
@@ -24,16 +21,13 @@ GEM
       rack-protection (~> 1.2)
       tilt (~> 1.3, >= 1.3.3)
     syntax (1.0.0)
-    tilt (1.3.3)
-    torquebox-cache (2.0.3-java)
-      torquebox-core (= 2.0.3)
-      torquebox-transactions (= 2.0.3)
-    torquebox-core (2.0.3-java)
-    torquebox-transactions (2.0.3)
-      torquebox-core (= 2.0.3)
+    tilt (1.4.1)
+    unicorn (4.7.0)
+      kgio (~> 2.6)
+      rack
+      raindrops (~> 0.7)
 
 PLATFORMS
-  java
   ruby
 
 DEPENDENCIES
@@ -47,3 +41,4 @@ DEPENDENCIES
   rest-client (= 1.6.7)
   sinatra (= 1.3.2)
   torquebox-cache
+  unicorn
