@@ -1,1 +1,1 @@
-web: bundle exec unicorn -p $PORT -E $RACK_ENV -c config.ru
+web: bundle exec unicorn -p $PORT -E $RACK_ENV 
